@@ -27,6 +27,16 @@ describe User do
         let(:name) { 'John' }
 
         it { is_expected.not_to be_valid }
+
+        it 'does not run any password complexity validations' do
+          too_short_error = "is too short (minimum is 10 characters)"
+          must_have_digit_error = I18n.t('activerecord.errors.models.user.attributes.password.must_have_digit')
+
+          expect(subject).not_to be_valid
+
+          expect(subject.errors[:password]).not_to include too_short_error
+          expect(subject.errors[:password]).not_to include must_have_digit_error
+        end
       end
     end
 
