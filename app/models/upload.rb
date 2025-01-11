@@ -6,6 +6,7 @@ class Upload
   attr_accessor :file
 
   validates :file, presence: true
+  validates_with CsvValidator, if: :csv
 
   def csv
     @csv ||= begin
