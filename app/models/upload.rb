@@ -16,4 +16,7 @@ class Upload
                false
              end
   end
+
+  def process_in_batches(batch_size = 100)
+  end
 end
