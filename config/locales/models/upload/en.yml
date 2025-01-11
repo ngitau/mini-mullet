@@ -1,0 +1,9 @@
+en:
+  activemodel:
+    errors:
+      models:
+        upload:
+          attributes:
+            file:
+              must_be_valid_csv_file: is malformed, not a valid csv file
+              must_have_data_rows: is empty, must have rows with data
