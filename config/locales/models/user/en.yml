@@ -1,0 +1,12 @@
+en:
+  activerecord:
+    errors:
+      models:
+        user:
+          attributes:
+            password:
+              must_have_digit: must have at least one digit
+              must_have_lowercase_char: must have at least one lowercase character
+              must_have_uppercase_char: must have at least one uppercase character
+              must_not_have_3_repeating_chars: must not contain three repeating characters
+

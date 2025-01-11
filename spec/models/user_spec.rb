@@ -1,0 +1,128 @@
+describe User do
+  describe 'validations' do
+    subject { User.new(name:, password:) }
+
+    context 'with valid attributes' do
+      let(:name) { 'John' }
+      let(:password) { 'Aqpfk1swods' }
+
+      it { is_expected.to be_valid }
+    end
+
+    context 'with missing attributes' do
+      let(:name) { '' }
+      let(:password) { '' }
+
+      context 'when name and password are not provided' do
+        it { is_expected.not_to be_valid }
+      end
+
+      context 'when a name is not provided' do
+        let(:password) { 'password' }
+
+        it { is_expected.not_to be_valid }
+      end
+
+      context 'when a password is not provided' do
+        let(:name) { 'John' }
+
+        it { is_expected.not_to be_valid }
+      end
+    end
+
+    context 'with an invalid password' do
+      let(:name) { 'John' }
+
+      context 'when the password is too short' do
+        let(:password) { 'Abc123' }
+
+        it 'is not valid and bears the correct error message' do
+          error_message = "is too short (minimum is 10 characters)"
+
+          expect(subject).not_to be_valid
+          expect(subject.errors[:password]).to include error_message
+        end
+      end
+
+      context 'when the password is too long' do
+        let(:password) { 'Abc123qwertyuiop.' }
+
+        it 'is not valid and bears the correct error message' do
+          error_message = "is too long (maximum is 16 characters)"
+
+          expect(subject).not_to be_valid
+          expect(subject.errors[:password]).to include error_message
+        end
+      end
+
+      context 'when the password does not contain an uppercase character' do
+        let(:password) { 'abcdefghijklmnop' }
+
+        it 'is not valid and bears the correct error message' do
+          error_message = I18n.t('activerecord.errors.models.user.attributes.password.must_have_uppercase_char')
+
+          expect(subject).not_to be_valid
+          expect(subject.errors[:password]).to include error_message
+        end
+      end
+
+      context 'when the password does not contain an lowercase character' do
+        let(:password) { 'QWERTYUIOP' }
+
+        it 'is not valid and bears the correct error message' do
+          error_message = I18n.t('activerecord.errors.models.user.attributes.password.must_have_lowercase_char')
+
+          expect(subject).not_to be_valid
+          expect(subject.errors[:password]).to include error_message
+        end
+      end
+
+      context 'when the password does not contain an a digit' do
+        let(:password) { '@bcdefghijklmnop' }
+
+        it 'is not valid and bears the correct error message' do
+          error_message = I18n.t('activerecord.errors.models.user.attributes.password.must_have_digit')
+
+          expect(subject).not_to be_valid
+          expect(subject.errors[:password]).to include error_message
+        end
+      end
+
+      context 'when the password contains three repeating characters' do
+        let(:password) { 'AAAfk1swods' }
+
+        it 'is not valid and bears the correct error message' do
+          error_message = I18n.t('activerecord.errors.models.user.attributes.password.must_not_have_3_repeating_chars')
+
+          expect(subject).not_to be_valid
+          expect(subject.errors[:password]).to include error_message
+        end
+      end
+
+      context 'when the password validation fails multiple complexity checks' do
+        let(:password) { 'aafklswodsa' }
+
+        it 'is not valid and bears the correct error messages' do
+          error_messages = [
+            I18n.t('activerecord.errors.models.user.attributes.password.must_have_digit'),
+            I18n.t('activerecord.errors.models.user.attributes.password.must_have_uppercase_char')
+          ]
+
+          expect(subject).not_to be_valid
+          expect(subject.errors[:password]).to eq error_messages
+        end
+      end
+    end
+  end
+
+  describe 'normalizations' do
+    context 'when name is provided with leading or trailing whitespaces' do
+      it 'trims whitespaces' do
+        name = '  John '
+        user = User.create!(name:, password: 'PFSHH78KSMa')
+
+        expect(user.name).to eq name.strip
+      end
+    end
+  end
+end
