@@ -135,4 +135,49 @@ describe User do
       end
     end
   end
+
+  describe 'methods' do
+    describe '.create_from_rows' do
+      subject { User.create_from_collection(rows, []) }
+      let(:rows) { [] }
+
+      context 'when one of the rows has the required data' do
+        before do
+          rows << { name: 'John', password: 'PFSHH78KSMa' }
+        end
+
+        it 'returns a result hash with validity attributes' do
+          expect(subject.count).to eq rows.count
+          expect(subject.first['valid?']).to be_truthy
+          expect(subject.first['errors']).to be_empty
+        end
+
+        it 'create a user' do
+          expect { subject }.to change(User, :count).by 1
+        end
+      end
+
+      context 'when a row is missing some data' do
+        before do
+          rows << { name: 'John' }
+        end
+
+        it 'returns a result hash with validity attributes' do
+          expect(subject.count).to eq rows.count
+          expect(subject.first['valid?']).to be_falsey
+          expect(subject.first['errors']).not_to be_empty
+        end
+
+        it 'does not create any records' do
+          expect { subject }.not_to change(User, :count)
+        end
+      end
+
+      context 'when all of the rows are empty' do
+        it 'does not create any records' do
+          expect { subject }.not_to change(User, :count)
+        end
+      end
+    end
+  end
 end
