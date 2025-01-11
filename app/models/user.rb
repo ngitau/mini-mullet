@@ -9,4 +9,16 @@ class User < ApplicationRecord
   end
 
   normalizes :name, with: ->(value) { value.strip }
+
+  class << self
+    def create_from_collection(rows, results)
+      rows.each_with_object(results) do |row, outcomes|
+        user = User.create(row.slice(:name, :password))
+        row["valid?"] = user.valid?
+        row["errors"] = user.errors.full_messages.join(", ")
+
+        outcomes << (row)
+      end
+    end
+  end
 end
