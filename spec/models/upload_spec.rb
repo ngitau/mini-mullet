@@ -50,7 +50,9 @@ describe Upload do
 
       context 'with a valid file' do
         it 'returns a result for every row in the csv' do
-          expect(subject.count).to eq upload.csv.count
+          subject
+
+          expect(upload.results.count).to eq upload.csv.count
         end
 
         it 'attempts to create users in batches' do
@@ -66,6 +68,12 @@ describe Upload do
         let(:file) { fixture_file_upload(Rails.root.join("spec", "fixtures", "dummy.pdf")) }
 
         it { is_expected.to be_falsey }
+
+        it 'returns an empty result' do
+          subject
+
+          expect(upload.results).to be_empty
+        end
       end
     end
   end
