@@ -3,10 +3,17 @@ require "csv"
 class Upload
   include ActiveModel::Model
 
-  attr_accessor :file
+  attr_reader :file
+  attr_accessor :results, :batch_size
 
   validates :file, presence: true
   validates_with CsvValidator, if: :csv
+
+  def initialize(attributes = {})
+    @file = attributes[:file]
+    @batch_size = attributes[:batch_size] || 100
+    @results = []
+  end
 
   def csv
     @csv ||= begin
@@ -16,11 +23,7 @@ class Upload
              end
   end
 
-  def results
-    @results ||= []
-  end
-
-  def process_in_batches(batch_size = 100)
+  def process_in_batches
     return false unless valid?
 
     batch = []

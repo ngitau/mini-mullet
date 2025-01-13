@@ -41,11 +41,14 @@ describe Upload do
   end
 
   describe 'methods' do
-    describe '.process_in_batches' do
-      subject { upload.process_in_batches(batch_size) }
+    let(:file) { instance_double("File", read: file_content) }
+    let(:upload) { described_class.new(file:, batch_size:) }
+    let(:batch_size) { 3 }
+
+    describe '#process_in_batches' do
+      subject { upload.process_in_batches }
 
       let(:file) { fixture_file_upload(Rails.root.join("spec", "fixtures", "valid_file.csv")) }
-      let(:upload) { Upload.new(file:) }
       let(:batch_size) { 4 }
 
       context 'with a valid file' do
