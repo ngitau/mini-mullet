@@ -1,6 +1,6 @@
 <%= turbo_frame_tag "upload_status" do %>
   <div id="upload-status" data-upload-target="info">
-    <div class="bg-red-100 border border-blue-400 text-blue-700 px-4 py-3 my-5 rounded relative" role="alert">
+    <div class="bg-slate-100 border border-red-400 text-red-700 px-4 py-3 my-5 rounded relative" role="alert">
       <p class="font-bold" data-upload-target="title">
         <%= "Can not process #{@upload.file.try(:original_filename)}" %>
       </p>
