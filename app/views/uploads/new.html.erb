@@ -1,7 +1,14 @@
 <% content_for :title, "New upload" %>
 
-<turbo-frame id="upload" class="md:w-2/3 w-full mx-auto">
+<turbo-frame id="upload" class="md:w-2/3 w-full mx-auto" data-controller="upload">
+  <%= turbo_frame_tag "upload_status" do %>
+    <div id="upload-status" data-upload-target="info">
+      <div class="bg-slate-100 border border-blue-400 text-blue-700 px-4 py-3 rounded relative" role="alert">
+        <p class="font-bold" data-upload-target="title">Import users from a csv file</p>
+        <span class="block sm:inline" data-upload-target="message">Upload a csv file with user data.</span>
+      </div>
+    </div>
+  <% end %>
+
   <%= render "form", upload: @upload %>
 </turbo-frame>
-
-
