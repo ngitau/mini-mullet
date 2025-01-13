@@ -28,3 +28,20 @@ For each row in the CSV file, the system will attempt to create a User in the da
 
 
 You do not need to make the website look pretty. You must use Stimulus to trigger the form submission. Do not implement any additional functionality, such as user authentication.
+
+## Demo URL
+[ Visit Demo ](https://dais.ndungugitau.com)
+
+## Assumptions
+- A valid csv will have a header row
+- CSV columns that have a comma will be quoted with _double quotes
+- A user can only upload a file on the page
+- The app should only have one DB entity, user
+- A `User` record is not unique by name and password
+- Upload results cannot be displayed again if the user refreshes the page or navigates away from it
+
+## Run Tests
+```shell
+  ./bin/rails spec
+```
+
