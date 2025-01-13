@@ -138,7 +138,8 @@ describe User do
 
   describe 'methods' do
     describe '.create_from_rows' do
-      subject { User.create_from_collection(rows, []) }
+      subject { User.create_from_collection(rows) }
+
       let(:rows) { [] }
 
       context 'when one of the rows has the required data' do
