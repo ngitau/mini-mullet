@@ -7,7 +7,7 @@ class UploadsController < ApplicationController
   # POST /uploads
   def create
     @upload = Upload.new(file: upload_params[:file])
-    @upload.process_in_batches(100) if @upload.valid?
+    @upload.process if @upload.valid?
 
     respond_to do |format|
       format.turbo_stream do
