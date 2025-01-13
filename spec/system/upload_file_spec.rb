@@ -5,6 +5,14 @@ describe "upload file" do
 
       expect(page).to have_selector('input[type="file"]')
       expect(page).to have_selector('input[type="submit"]')
+
+      expect(page).to have_selector('[data-controller="upload"]')
+
+      expect(page).to have_selector('[data-upload-target="form"]')
+      expect(page).to have_selector('[data-upload-target="file"]')
+      expect(page).to have_selector('[data-upload-target="info"]')
+
+      expect(page).to have_selector('[data-action="click->upload#upload"]')
     end
 
     context "when a file is uploaded" do
