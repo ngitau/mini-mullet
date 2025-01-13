@@ -13,9 +13,9 @@ class User < ApplicationRecord
   class << self
     def create_from_collection(rows, results)
       rows.each_with_object(results) do |row, outcomes|
-        user = User.create(row.slice(:name, :password))
+        user = User.create(row.slice("name", "password"))
         row["valid?"] = user.valid?
-        row["errors"] = user.errors.full_messages.join(", ")
+        row["result"] = user.valid? ? "Success" : user.errors.full_messages.join(", ")
 
         outcomes << (row)
       end

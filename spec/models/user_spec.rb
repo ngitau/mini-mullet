@@ -143,13 +143,13 @@ describe User do
 
       context 'when one of the rows has the required data' do
         before do
-          rows << { name: 'John', password: 'PFSHH78KSMa' }
+          rows << { name: 'John', password: 'PFSHH78KSMa' }.with_indifferent_access
         end
 
         it 'returns a result hash with validity attributes' do
           expect(subject.count).to eq rows.count
           expect(subject.first['valid?']).to be_truthy
-          expect(subject.first['errors']).to be_empty
+          expect(subject.first['result']).to eq 'Success'
         end
 
         it 'create a user' do
@@ -159,13 +159,14 @@ describe User do
 
       context 'when a row is missing some data' do
         before do
-          rows << { name: 'John' }
+          rows << { name: 'John' }.with_indifferent_access
         end
 
         it 'returns a result hash with validity attributes' do
           expect(subject.count).to eq rows.count
+
           expect(subject.first['valid?']).to be_falsey
-          expect(subject.first['errors']).not_to be_empty
+          expect(subject.first['result']).not_to eq 'Success'
         end
 
         it 'does not create any records' do
