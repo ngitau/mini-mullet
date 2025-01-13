@@ -104,5 +104,42 @@ describe Upload do
         end
       end
     end
+
+    describe "#update_file" do
+      let(:upload) { described_class.new(file: file) }
+      let(:file) { instance_double("File",  path: file_path, read: file_content, write: nil) }
+      let(:file_path) { fixture_file_upload(Rails.root.join("spec", "fixtures", "empty_file.csv")) }
+      let(:file_content) { "name,password\nJohnDoe,secret\nJaneDoe,password123\n" }
+      let(:normalized_content) { "name,password\nJohnDoe,secret\nJaneDoe,password123\n" }
+
+      before do
+        allow(upload).to receive(:normalized_str).and_return(normalized_content)
+      end
+
+      context "when file contents are not substituted" do
+        it "does not write to the file" do
+          allow(upload).to receive(:contents).and_return(normalized_content)
+
+          expect(file).not_to receive(:write)
+
+          upload.update_file
+        end
+      end
+
+      context "when file contents are substituted" do
+        let(:invalid_content) { "name,password\r\nJohnDoe,secret\r\nJaneDoe,password123\r\n" }
+
+        before do
+          allow(upload).to receive(:contents).and_return(invalid_content)
+        end
+
+        it "opens the file in write mode and writes the updated content" do
+          expect(File).to receive(:open).with(file_path, "w").and_yield(file_instance = double("File"))
+          expect(file_instance).to receive(:write).with(normalized_content)
+
+          upload.update_file
+        end
+      end
+    end
   end
 end

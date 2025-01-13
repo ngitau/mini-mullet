@@ -15,12 +15,31 @@ class Upload
     @results = []
   end
 
+  def contents
+    @contents ||= file&.read || ""
+  end
+
+  def normalized_str
+    @normalized_str ||= begin
+                          return contents unless contents.include?("\r")
+                          contents.gsub("\r\r\n", "\n").gsub("\r", "\n")
+                        end
+  end
+
   def csv
     @csv ||= begin
-               CSV.parse(file&.read || "", headers: true)
              rescue CSV::MalformedCSVError
+               CSV.parse(normalized_str, headers: true)
                handle_malformed_csv_error
              end
+  end
+
+  def update_file
+    return if normalized_str.equal?(contents)
+
+    File.open(file.path, "w") do |file|
+      file.write(normalized_str)
+    end
   end
 
 
