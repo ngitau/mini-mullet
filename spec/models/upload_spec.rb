@@ -45,6 +45,38 @@ describe Upload do
     let(:upload) { described_class.new(file:, batch_size:) }
     let(:batch_size) { 3 }
 
+    describe '#process' do
+      subject { upload.process }
+
+      context "when rows are fewer than the batch size" do
+        let(:file_content) { "name,password\nJohnDoe,secret\nJaneDoe,password123\n" }
+
+        it "calls .process_whole" do
+          allow(upload).to receive(:csv).and_return(CSV.parse(file_content, headers: true))
+          allow(upload).to receive(:process_whole).and_return true
+
+          expect(upload).to receive(:process_whole).once
+
+          subject
+        end
+      end
+
+      context "when rows are more than the batch size" do
+        let(:file_content) { "name,password\n" + Array.new(5) { "JohnDoe,secret" }.join("\n") }
+
+        it "calls .update_file and .process_in_batches" do
+          allow(upload).to receive(:csv).and_return(CSV.parse(file_content, headers: true))
+          allow(upload).to receive(:update_file).and_return true
+          allow(upload).to receive(:process_in_batches).and_return true
+
+          expect(upload).to receive(:update_file).once
+          expect(upload).to receive(:process_in_batches).once
+
+          subject
+        end
+      end
+    end
+
     describe '#process_whole' do
       subject { upload.process_whole }
 

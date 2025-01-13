@@ -28,8 +28,8 @@ class Upload
 
   def csv
     @csv ||= begin
-             rescue CSV::MalformedCSVError
                CSV.parse(normalized_str, headers: true)
+             rescue CSV::MalformedCSVError, NoMethodError
                handle_malformed_csv_error
              end
   end
@@ -40,6 +40,13 @@ class Upload
     File.open(file.path, "w") do |file|
       file.write(normalized_str)
     end
+  end
+
+  def process
+    return process_whole if csv.count < batch_size
+
+    update_file
+    process_in_batches
   end
 
 
