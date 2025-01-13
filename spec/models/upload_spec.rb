@@ -45,6 +45,31 @@ describe Upload do
     let(:upload) { described_class.new(file:, batch_size:) }
     let(:batch_size) { 3 }
 
+    describe '#process_whole' do
+      subject { upload.process_whole }
+
+      let(:file_content) { "name,password\nJohnDoe,PFSHH78KSMa\n" }
+
+      context 'when one of the csv rows is valid' do
+        it "creates a user and returns a success row" do
+          allow(upload).to receive(:csv).and_return(CSV.parse(file_content, headers: true))
+
+          expect(subject.count). to eq 1
+          expect(subject.first['result']). to eq "Success"
+        end
+      end
+
+      context 'when one of the csv rows is invalid' do
+        let(:file_content) { "name,password\nJaneDoe,password123\n" }
+
+        it "creates a user and returns a success row" do
+          allow(upload).to receive(:csv).and_return(CSV.parse(file_content, headers: true))
+
+          expect(subject.first['result']).not_to eq "Success"
+        end
+      end
+    end
+
     describe '#process_in_batches' do
       subject { upload.process_in_batches }
 

@@ -23,6 +23,19 @@ class Upload
              end
   end
 
+
+  def process_whole
+    csv.each_with_object(results) do |csv_row, outcomes|
+      row = csv_row.to_h
+
+      user = User.create(row.slice("name", "password"))
+      row["valid?"] = user.valid?
+      row["result"] = user.valid? ? "Success" : user.errors.full_messages.join(", ")
+
+      outcomes << (row)
+    end
+  end
+
   def process_in_batches
     return false unless valid?
 
