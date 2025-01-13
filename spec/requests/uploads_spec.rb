@@ -19,7 +19,7 @@ describe "/uploads" do
           expect(response).to have_http_status(:ok)
           expect(response.content_type).to eq("text/vnd.turbo-stream.html; charset=utf-8")
           expect(response.body).to include('<turbo-stream action="replace" target="upload">')
-          expect(response.body).to include('<div id="upload-status" data-upload-target="progress">')
+          expect(response.body).to include('<div id="upload-status" data-upload-target="info">')
           expect(response.body).to include('The file was processed successfully.')
         end
 
@@ -40,7 +40,7 @@ describe "/uploads" do
           expect(response).to have_http_status(:ok)
           expect(response.content_type).to eq("text/vnd.turbo-stream.html; charset=utf-8")
           expect(response.body).to include('<turbo-stream action="replace" target="upload_status">')
-          expect(response.body).to include('<div id="upload-status" data-upload-target="progress">')
+          expect(response.body).to include('<div id="upload-status" data-upload-target="info">')
           expect(response.body).to include('Can not process')
         end
 
@@ -62,7 +62,7 @@ describe "/uploads" do
           expect(response).to have_http_status(:ok)
           expect(response.content_type).to eq("text/vnd.turbo-stream.html; charset=utf-8")
           expect(response.body).to include('<turbo-stream action="replace" target="upload_status">')
-          expect(response.body).to include('<div id="upload-status" data-upload-target="progress">')
+          expect(response.body).to include('<div id="upload-status" data-upload-target="info">')
           expect(response.body).to include('Can not process')
         end
 
