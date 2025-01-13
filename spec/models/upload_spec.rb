@@ -116,7 +116,7 @@ describe Upload do
         end
 
         it 'attempts to create users in batches' do
-          allow(User).to receive(:create_from_collection)
+          allow(User).to receive(:create_from_collection).and_return []
 
           subject
 

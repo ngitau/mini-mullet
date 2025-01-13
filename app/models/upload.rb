@@ -71,7 +71,7 @@ class Upload
       batch << row.to_h
 
       if batch.size >= batch_size
-        results = process_batch(batch)
+        process_batch(batch)
         batch.clear
       end
     end
@@ -82,7 +82,9 @@ class Upload
 
   private
 
-  def process_batch(batch) = User.create_from_collection(batch, results)
+  def process_batch(batch)
+    results.concat User.create_from_collection(batch)
+  end
 
   def handle_malformed_csv_error
     errors.add(:file, I18n.t("activemodel.errors.models.upload.attributes.file.must_be_valid_csv_file"))
