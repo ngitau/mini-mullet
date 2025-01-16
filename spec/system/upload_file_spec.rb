@@ -1,6 +1,7 @@
 describe "upload file page" do
   context 'loaded' do
     before do
+      allow_any_instance_of(UploadsController).to receive(:protect_against_forgery?).and_return(true)
       visit new_upload_path
     end
 
@@ -18,7 +19,7 @@ describe "upload file page" do
     end
 
     context 'when form is submitted' do
-      context "with no file was chosen" do
+      context "without a file" do
         it "notifies the user" do
           click_button 'Upload'
 
@@ -26,21 +27,41 @@ describe "upload file page" do
         end
       end
 
-      context "when a file is provided" do
+      context "with a file" do
         context "with a valid file" do
           it "uploads the file and shows success message" do
-            skip "AJAX request not getting triggered"
-
             attach_file 'upload[file]', Rails.root.join("spec", "fixtures", "valid_file.csv")
 
             click_button 'Upload'
 
             expect(page).to have_content 'The file was processed successfully.'
+            expect(page).to have_content 'Name'
+            expect(page).to have_content 'Password'
+            expect(page).to have_content 'Result'
+            expect(page).to have_link 'New Upload'
           end
         end
 
         context "with an invalid file" do
-          skip "AJAX request not getting triggered"
+          it "shows an error message" do
+            attach_file 'upload[file]', Rails.root.join("spec", "fixtures", "dummy.pdf")
+
+            click_button 'Upload'
+
+            expect(page).not_to have_content 'The file was processed successfully.'
+            expect(page).to have_content I18n.t('activemodel.errors.models.upload.attributes.file.must_be_valid_csv_file')
+          end
+        end
+
+        context "with an empty file" do
+          it "shows an error message" do
+            attach_file 'upload[file]', Rails.root.join("spec", "fixtures", "empty_file.csv")
+
+            click_button 'Upload'
+
+            expect(page).not_to have_content 'The file was processed successfully.'
+            expect(page).to have_content I18n.t('activemodel.errors.models.upload.attributes.file.must_have_data_rows')
+          end
         end
       end
     end
