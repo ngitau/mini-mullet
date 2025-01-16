@@ -4,7 +4,7 @@ class Upload
   include ActiveModel::Model
 
   attr_reader :file
-  attr_accessor :results, :batch_size
+  attr_accessor :results, :batch_size, :col_sep
 
   validates :file, presence: true
   validates_with CsvValidator, if: :csv
@@ -12,6 +12,7 @@ class Upload
   def initialize(attributes = {})
     @file = attributes[:file]
     @batch_size = attributes[:batch_size] || 100
+    @col_sep = attributes[:col_sep] || ","
     @results = []
   end
 
@@ -28,7 +29,7 @@ class Upload
 
   def csv
     @csv ||= begin
-               CSV.parse(normalized_str, headers: true)
+               CSV.parse(normalized_str, headers: true, col_sep:)
              rescue CSV::MalformedCSVError, NoMethodError
                handle_malformed_csv_error
              end
@@ -67,7 +68,7 @@ class Upload
 
     batch = []
 
-    CSV.foreach(file, headers: true) do |row|
+    CSV.foreach(file, headers: true, col_sep:) do |row|
       batch << row.to_h
 
       if batch.size >= batch_size

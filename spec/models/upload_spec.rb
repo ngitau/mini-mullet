@@ -27,7 +27,23 @@ describe Upload do
         let(:file_content) { "JohnDoe,secret\nJaneDoe,password123\n" }
 
         it 'is not valid and bears the correct error message' do
+          allow(file).to receive(:open).with(file_path, 'r').and_return [ "name,password\n" ]
+
           error_message = I18n.t('activemodel.errors.models.upload.attributes.file.must_have_required_headers')
+
+          expect(subject).not_to be_valid
+          expect(subject.errors[:file]).to include(error_message)
+        end
+      end
+
+      context 'when a file has an invalid delimiter' do
+        let(:file_name) { 'invalid_delimiter.csv' }
+        let(:col_sep) { ',' }
+
+        it 'is not valid and bears the correct error message' do
+          # skip 'Flaky'
+
+          error_message = I18n.t('activemodel.errors.models.upload.attributes.file.must_use_valid_delimiter', col_sep:)
 
           expect(subject).not_to be_valid
           expect(subject.errors[:file]).to include(error_message)
@@ -162,7 +178,6 @@ describe Upload do
     end
 
     describe "#update_file" do
-      let(:upload) { described_class.new(file: file) }
       let(:file) { instance_double("File",  path: file_path, read: file_content, write: nil) }
       let(:file_path) { fixture_file_upload(Rails.root.join("spec", "fixtures", "empty_file.csv")) }
       let(:file_content) { "name,password\nJohnDoe,secret\nJaneDoe,password123\n" }
