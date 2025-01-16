@@ -51,15 +51,15 @@ class Upload
 
 
   def process_whole
-    csv.each_with_object(results) do |csv_row, outcomes|
+    @results = csv.map do |csv_row|
       row = csv_row.to_h
+      next if row.values.all?(nil)
 
       user = User.create(row.slice("name", "password"))
       row["valid?"] = user.valid?
       row["result"] = user.valid? ? "Success" : user.errors.full_messages.join(", ")
-
-      outcomes << (row)
-    end
+      row
+    end.compact
   end
 
   def process_in_batches
