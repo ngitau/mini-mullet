@@ -4,9 +4,9 @@ describe Upload do
 
     context 'with file provided' do
       let(:file) { fixture_file_upload(Rails.root.join("spec", "fixtures", "#{file_name}")) }
-      context 'when a valid file is provided' do
-        let(:file_name) { 'valid_file.csv' }
+      let(:file_name) { 'valid_file.csv' }
 
+      context 'when a valid file is provided' do
         it { is_expected.to be_valid }
       end
 
@@ -15,6 +15,18 @@ describe Upload do
 
         it 'is not valid and bears the correct error message' do
           error_message = I18n.t('activemodel.errors.models.upload.attributes.file.must_have_data_rows')
+
+          expect(subject).not_to be_valid
+          expect(subject.errors[:file]).to include(error_message)
+        end
+      end
+
+      context 'when a file is missing required headers' do
+        let(:file) { instance_double("File", read: file_content) }
+        let(:file_content) { "JohnDoe,secret\nJaneDoe,password123\n" }
+
+        it 'is not valid and bears the correct error message' do
+          error_message = I18n.t('activemodel.errors.models.upload.attributes.file.must_have_required_headers')
 
           expect(subject).not_to be_valid
           expect(subject.errors[:file]).to include(error_message)
