@@ -32,7 +32,7 @@ class Upload::CsvValidator < ActiveModel::Validator
   end
 
   def validate_size(record)
-    return if File.size(file.path) < 10*(1024**2)
+    return if file.size < 10*(1024**2)
 
     record.errors.add(:file, I18n.t("activemodel.errors.models.upload.attributes.file.must_be_within_size_limit"))
   end
