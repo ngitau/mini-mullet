@@ -22,7 +22,7 @@ describe Upload do
       end
 
       context 'when a file is missing required headers' do
-        let(:file) { instance_double("File", path: file_path, read: file_content) }
+        let(:file) { instance_double("File", path: file_path, read: file_content, size: 10) }
         let(:file_path) { fixture_file_upload(Rails.root.join("spec", "fixtures", "empty_file.csv")) }
         let(:file_content) { "JohnDoe,secret\nJaneDoe,password123\n" }
 
@@ -52,7 +52,7 @@ describe Upload do
 
       context 'when file size is greater than limit' do
         it 'is not valid and bears the correct error message' do
-          allow(File).to receive(:size).with(file.path).and_return(11*(1024**2))
+          allow(file).to receive(:size).and_return(11*(1024**2))
 
           error_message = I18n.t('activemodel.errors.models.upload.attributes.file.must_be_within_size_limit')
 

@@ -35,6 +35,10 @@ class Upload
              end
   end
 
+  def size
+    @size ||= file.present? ? File.size(file.path) : 0
+  end
+
   def update_file
     return if normalized_str.equal?(contents)
 
