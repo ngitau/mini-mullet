@@ -1,7 +1,7 @@
 class UploadsController < ApplicationController
   # GET /uploads/new
   def new
-    @upload = Upload.new(file: nil)
+    @upload = Upload.new
   end
 
   # POST /uploads
