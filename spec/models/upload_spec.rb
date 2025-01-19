@@ -237,5 +237,9 @@ describe Upload do
         end
       end
     end
+
+    describe '#process_later' do
+      pending
+    end
   end
 end
