@@ -81,16 +81,41 @@ describe Upload do
   end
 
   describe 'methods' do
+    let(:file_content) { "name,password\nJohnDoe,secret\nJaneDoe,password123\n" }
     let(:file) { instance_double("File", read: file_content) }
     let(:upload) { described_class.new(file:, batch_size:) }
     let(:batch_size) { 3 }
+
+    describe "#save" do
+      subject(:save) { upload.save }
+
+      context 'when upload is valid' do
+        it "calls #process" do
+          allow(upload).to receive(:valid?).and_return true
+          allow(upload).to receive(:process).and_return true
+
+          expect(upload).to receive(:process).once
+
+          save
+        end
+      end
+
+      context 'when upload is not valid' do
+        it "calls #process" do
+          allow(upload).to receive(:valid?).and_return false
+
+          expect(upload).not_to receive(:process)
+
+          save
+        end
+      end
+
+    end
 
     describe '#process' do
       subject { upload.process }
 
       context "when rows are fewer than the batch size" do
-        let(:file_content) { "name,password\nJohnDoe,secret\nJaneDoe,password123\n" }
-
         it "calls .process_whole" do
           allow(upload).to receive(:csv).and_return(CSV.parse(file_content, headers: true))
           allow(upload).to receive(:process_whole).and_return true
