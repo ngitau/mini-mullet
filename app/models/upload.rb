@@ -50,12 +50,21 @@ class Upload
   def save = self.valid? ? self.process && true : false
 
   def process
+    # TODO:// return process_later if size > 1.megabyte
+
     return process_whole if csv.count < batch_size
 
     update_file
     process_in_batches
   end
 
+  def process_later
+    # TODO://
+    #   - Upload file using ActiveStorage (ActiveStorage::Blob.create_and_upload!(io: file, filename: filename)
+    #   - UploadJob.perform_later(checksum: blob.checksum)
+    #   - Notify user the job will be processed in the background
+    #   - In the Job - call #process_and_stream_results
+  end
 
   def process_whole
     @results = csv.map do |csv_row|
