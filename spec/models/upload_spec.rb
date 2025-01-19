@@ -1,5 +1,5 @@
 describe Upload do
-  describe "validations" do
+  describe "#valid?" do
     subject { Upload.new(file:) }
 
     context 'with file provided' do
@@ -113,7 +113,7 @@ describe Upload do
     end
 
     describe '#process' do
-      subject { upload.process }
+      subject(:process) { upload.process }
 
       context "when rows are fewer than the batch size" do
         it "calls .process_whole" do
@@ -122,7 +122,7 @@ describe Upload do
 
           expect(upload).to receive(:process_whole).once
 
-          subject
+          process
         end
       end
 
@@ -137,13 +137,13 @@ describe Upload do
           expect(upload).to receive(:update_file).once
           expect(upload).to receive(:process_in_batches).once
 
-          subject
+          process
         end
       end
     end
 
     describe '#process_whole' do
-      subject { upload.process_whole }
+      subject(:process_whole) { upload.process_whole }
 
       let(:file_content) { "name,password\nJohnDoe,PFSHH78KSMa\n" }
 
@@ -151,8 +151,8 @@ describe Upload do
         it "creates a user and returns a success row" do
           allow(upload).to receive(:csv).and_return(CSV.parse(file_content, headers: true))
 
-          expect(subject.count). to eq 1
-          expect(subject.first['result']). to eq "Success"
+          expect(process_whole.count). to eq 1
+          expect(process_whole.first['result']). to eq "Success"
         end
       end
 
@@ -162,28 +162,26 @@ describe Upload do
         it "creates a user and returns a success row" do
           allow(upload).to receive(:csv).and_return(CSV.parse(file_content, headers: true))
 
-          expect(subject.first['result']).not_to eq "Success"
+          expect(process_whole.first['result']).not_to eq "Success"
         end
       end
     end
 
     describe '#process_in_batches' do
-      subject { upload.process_in_batches }
+      subject(:process_in_batches) { upload.process_in_batches }
 
       let(:file) { fixture_file_upload(Rails.root.join("spec", "fixtures", "valid_file.csv")) }
       let(:batch_size) { 4 }
 
       context 'with a valid file' do
         it 'returns a result for every row in the csv' do
-          subject
-
-          expect(upload.results.count).to eq upload.csv.count
+          expect { process_in_batches }.to change(upload.results, :count).by(upload.csv.count)
         end
 
         it 'attempts to create users in batches' do
           allow(User).to receive(:create_from_collection).and_return []
 
-          subject
+          process_in_batches
 
           expect(User).to have_received(:create_from_collection).exactly(2).times
         end
@@ -195,14 +193,14 @@ describe Upload do
         it { is_expected.to be_falsey }
 
         it 'returns an empty result' do
-          subject
-
-          expect(upload.results).to be_empty
+          expect{ process_in_batches }.not_to change(upload.results, :count)
         end
       end
     end
 
     describe "#update_file" do
+      subject(:update_file) { upload.update_file }
+
       let(:file) { instance_double("File",  path: file_path, read: file_content, write: nil) }
       let(:file_path) { fixture_file_upload(Rails.root.join("spec", "fixtures", "empty_file.csv")) }
       let(:file_content) { "name,password\nJohnDoe,secret\nJaneDoe,password123\n" }
@@ -218,7 +216,7 @@ describe Upload do
 
           expect(file).not_to receive(:write)
 
-          upload.update_file
+          update_file
         end
       end
 
@@ -233,7 +231,7 @@ describe Upload do
           expect(File).to receive(:open).with(file_path, "w").and_yield(file_instance = double("File"))
           expect(file_instance).to receive(:write).with(normalized_content)
 
-          upload.update_file
+          update_file
         end
       end
     end
