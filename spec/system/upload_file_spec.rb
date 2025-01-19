@@ -38,6 +38,7 @@ describe "upload file page" do
             expect(page).to have_content 'Name'
             expect(page).to have_content 'Password'
             expect(page).to have_content 'Result'
+            expect(page).to have_content 'Success'
             expect(page).to have_link 'New Upload'
           end
         end
@@ -49,6 +50,7 @@ describe "upload file page" do
             click_button 'Upload'
 
             expect(page).not_to have_content 'The file was processed successfully.'
+            expect(page).not_to have_content 'Success'
             expect(page).to have_content I18n.t('activemodel.errors.models.upload.attributes.file.must_be_valid_csv_file')
           end
         end
