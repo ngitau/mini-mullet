@@ -1,5 +1,5 @@
 describe User do
-  describe 'validations' do
+  describe '#valid?' do
     subject { User.new(name:, password:) }
 
     context 'with valid attributes' do
@@ -125,7 +125,7 @@ describe User do
     end
   end
 
-  describe 'normalizations' do
+  describe '.normalizes' do
     context 'when name is provided with leading or trailing whitespaces' do
       it 'trims whitespaces' do
         name = '  John '
@@ -137,8 +137,8 @@ describe User do
   end
 
   describe 'methods' do
-    describe '.create_from_rows' do
-      subject { User.create_from_collection(rows) }
+    describe '#create_from_collection' do
+      subject(:create_from_collection) { User.create_from_collection(rows) }
 
       let(:rows) { [] }
 
@@ -148,13 +148,13 @@ describe User do
         end
 
         it 'returns a result hash with validity attributes' do
-          expect(subject.count).to eq rows.count
-          expect(subject.first['valid?']).to be_truthy
-          expect(subject.first['result']).to eq 'Success'
+          expect(create_from_collection.count).to eq rows.count
+          expect(create_from_collection.first['valid?']).to be_truthy
+          expect(create_from_collection.first['result']).to eq 'Success'
         end
 
         it 'create a user' do
-          expect { subject }.to change(User, :count).by 1
+          expect { create_from_collection }.to change(User, :count).by 1
         end
       end
 
@@ -164,20 +164,20 @@ describe User do
         end
 
         it 'returns a result hash with validity attributes' do
-          expect(subject.count).to eq rows.count
+          expect(create_from_collection.count).to eq rows.count
 
-          expect(subject.first['valid?']).to be_falsey
-          expect(subject.first['result']).not_to eq 'Success'
+          expect(create_from_collection.first['valid?']).to be_falsey
+          expect(create_from_collection.first['result']).not_to eq 'Success'
         end
 
         it 'does not create any records' do
-          expect { subject }.not_to change(User, :count)
+          expect { create_from_collection }.not_to change(User, :count)
         end
       end
 
       context 'when all of the rows are empty' do
         it 'does not create any records' do
-          expect { subject }.not_to change(User, :count)
+          expect { create_from_collection }.not_to change(User, :count)
         end
       end
     end
