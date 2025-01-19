@@ -1,5 +1,5 @@
 describe "upload file page" do
-  context 'loaded' do
+  context "loaded" do
     before do
       allow_any_instance_of(UploadsController).to receive(:protect_against_forgery?).and_return(true)
       visit new_upload_path
@@ -18,7 +18,7 @@ describe "upload file page" do
       expect(page).to have_selector('[data-action="click->upload#upload"]')
     end
 
-    context 'when form is submitted' do
+    context "when form is submitted" do
       context "without a file" do
         it "notifies the user" do
           click_button 'Upload'
