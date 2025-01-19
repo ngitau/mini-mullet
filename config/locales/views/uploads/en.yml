@@ -1,0 +1,14 @@
+en:
+  uploads:
+    title:
+      info: Import users from a csv file.
+      error: Can not process %{file_name}.
+    message:
+      info: Upload a csv file with user data.
+      file_missing: No file selected.
+      in_progress: Uploading...
+      failed: Upload failed, please try a different file.
+      error: An error occurred while uploading.
+    buttons:
+      submit: Upload
+      new_upload: New Upload
