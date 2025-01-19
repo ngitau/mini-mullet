@@ -7,16 +7,11 @@ class UploadsController < ApplicationController
   # POST /uploads
   def create
     @upload = Upload.new(file: upload_params[:file])
-    @upload.process if @upload.valid?
 
-    respond_to do |format|
-      format.turbo_stream do
-        if @upload.errors.present?
-          render turbo_stream: turbo_stream.replace("upload_status", partial: "uploads/error")
-        else
-          render turbo_stream: turbo_stream.replace("upload", partial: "uploads/upload")
-        end
-      end
+    if @upload.save
+      render turbo_stream: turbo_stream.replace("upload", partial: "uploads/upload")
+    else
+      render turbo_stream: turbo_stream.replace("upload_status", partial: "uploads/error")
     end
   end
 

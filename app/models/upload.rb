@@ -47,6 +47,8 @@ class Upload
     end
   end
 
+  def save = self.valid? ? self.process && true : false
+
   def process
     return process_whole if csv.count < batch_size
 
