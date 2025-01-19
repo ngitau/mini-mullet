@@ -109,7 +109,6 @@ describe Upload do
           save
         end
       end
-
     end
 
     describe '#process' do
@@ -193,7 +192,7 @@ describe Upload do
         it { is_expected.to be_falsey }
 
         it 'returns an empty result' do
-          expect{ process_in_batches }.not_to change(upload.results, :count)
+          expect { process_in_batches }.not_to change(upload.results, :count)
         end
       end
     end

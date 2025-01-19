@@ -23,7 +23,6 @@ describe "/uploads" do
           expect(response.body).to include('turbo-stream action="replace" target="upload"')
           expect(response.body).to include('div id="upload-status" data-upload-target="info"')
           expect(response.body).to include('The file was processed successfully.')
-
         end
 
         it "creates new user records" do
