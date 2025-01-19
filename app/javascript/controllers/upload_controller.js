@@ -1,7 +1,13 @@
 import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
-  static targets = ["file", "form", "title", "message"];
+  static targets = ["file", "form", "title", "message", "info"];
+  // static values = {
+  //   inProgress: String,
+  //   fileMissing: String,
+  //   failed: String,
+  //   error: String
+  // }
 
   async upload(event) {
     event.preventDefault();
@@ -11,7 +17,7 @@ export default class extends Controller {
     this.titleTarget.hidden = true;
 
     if (!file) {
-      this.messageTarget.textContent = "No file selected.";
+      this.messageTarget.textContent = this.infoTarget.dataset.uploadFileMissingValue
       return;
     }
 
@@ -19,7 +25,7 @@ export default class extends Controller {
     formData.append(fileInput.name, file);
 
     try {
-      this.messageTarget.textContent = "Uploading...";
+      this.messageTarget.textContent = this.infoTarget.dataset.uploadInProgressValue
       const response = await fetch(this.formTarget.action, {
         method: "POST",
         body: formData,
@@ -33,10 +39,10 @@ export default class extends Controller {
         const turboStream = await response.text();
         document.body.insertAdjacentHTML("beforeend", turboStream);
       } else {
-        this.messageTarget.textContent = "Upload failed, please try a different file.";
+        this.messageTarget.textContent = this.infoTarget.dataset.uploadFailedValue;
       }
     } catch (error) {
-      this.messageTarget.textContent = "An error occurred while uploading.";
+      this.messageTarget.textContent = this.infoTarget.dataset.uploadErrorValue;
     }
   }
 }

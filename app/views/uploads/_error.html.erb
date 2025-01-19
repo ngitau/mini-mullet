@@ -1,12 +1,3 @@
-<%= turbo_frame_tag "upload_status" do %>
-  <div id="upload-status" data-upload-target="info">
-    <div class="bg-slate-100 border border-red-400 text-red-700 px-4 py-3 my-5 rounded relative" role="alert">
-      <p class="font-bold" data-upload-target="title">
-        <%= "Can not process #{@upload.file.try(:original_filename)}" %>
-      </p>
-      <span class="block sm:inline" data-upload-target="message">
-      <%= "#{@upload.errors.full_messages.join(',') }" %>
-    </span>
-    </div>
-  </div>
-<% end %>
+<% title = t "uploads.title.error", file_name: @upload.file.try(:original_filename)  %>
+<% message = @upload.errors.full_messages.join(', ') %>
+<%= render partial: 'status', locals: {title:, message:} %>

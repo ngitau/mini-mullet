@@ -1,7 +1,7 @@
 <% content_for :title, "Upload Result" %>
 
 <turbo-frame id="upload" class="md:w-2/3 w-full mx-auto" data-controller="upload">
-  <%= link_to "New Upload", new_upload_path, class: "rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white inline-block font-medium cursor-pointer" %>
+  <%= link_to "#{t 'uploads.buttons.new_upload'}", new_upload_path, class: "rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white inline-block font-medium cursor-pointer" %>
   <div id="upload-status" data-upload-target="info">
     <div class="bg-teal-50 border border-gray-400 text-green-500 px-4 py-3 my-5 rounded relative" role="alert">
       <p class="font-bold">
